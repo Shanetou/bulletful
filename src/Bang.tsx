@@ -6,5 +6,5 @@ interface BangProps {
 
 export const Bang = (props: BangProps) => {
   const { boom } = props;
-  return <div>Hello there, Shane, {boom}</div>;
+  return <div>Hello there, Shane, bambambambam {boom}</div>;
 };
