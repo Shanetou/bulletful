@@ -19,8 +19,8 @@
     // https://43081j.com/2019/02/typescript-avoid-using-any
     "noImplicitReturns": true,
     // https://oraclefrontovik.com/2019/12/19/some-typescript-compiler-options-for-improving-code-quality/
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src"]
