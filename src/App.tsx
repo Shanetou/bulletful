@@ -2,17 +2,21 @@ import React from "react";
 import "./App.css";
 
 import { Bullets, bulletFactory } from "./Bullets";
-import { useRealtimeCollection, addDocToCollection } from "./firebase/service";
+import {
+  useRealtimeCollection,
+  addDocToCollection,
+  Collection,
+} from "./firebase/service";
 
 const bulletsFromFactory = bulletFactory(10);
 console.log("bulletsFromFactory:", bulletsFromFactory);
 
 bulletsFromFactory.forEach((bullet) => {
-  addDocToCollection("bullets", bullet);
+  addDocToCollection(Collection.bullets, bullet);
 });
 
 function App() {
-  const bullets = useRealtimeCollection("bullets");
+  const bullets = useRealtimeCollection(Collection.bullets);
   console.log("bullets:", bullets);
 
   return (

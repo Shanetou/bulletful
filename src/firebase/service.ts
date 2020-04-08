@@ -1,8 +1,12 @@
 import React from "react";
 import { db } from "./firebase.js";
 
+export enum Collection {
+  bullets = "bullets",
+}
+
 // Add loading finite state machine
-export function useRealtimeCollection(collection) {
+export function useRealtimeCollection(collection: Collection) {
   const [bullets, setBullets] = React.useState([]);
 
   React.useEffect(() => {
@@ -25,12 +29,13 @@ export function useRealtimeCollection(collection) {
     });
 
     return unsubscribe;
-  }, []);
+  }, [collection]);
 
   return bullets;
 }
 
-export function addDocToCollection(collection, doc) {
+// @ts-ignore
+export function addDocToCollection(collection: Collection, doc) {
   db.collection(collection)
     .add(doc)
     .then(function (docRef) {
