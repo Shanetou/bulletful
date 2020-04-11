@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import TextField from "@material-ui/core/TextField";
-
+import { KeyCode } from "./utils/constants";
 interface Bullet {
   id: string;
   parentId: number | null;
@@ -35,7 +35,33 @@ interface BulletProps {
 
 const Bullet = (props: BulletProps) => {
   const { bullet } = props;
-  return <TextField key={bullet.id} type="text" value={bullet.text} />;
+  const [text, setText] = useState(bullet.text);
+
+  const onChange = (event: any) => {
+    console.log("event.target.value:", event.target.value);
+    setText(event.target.value);
+  };
+
+  return (
+    <div>
+      <TextField
+        key={bullet.id}
+        value={text}
+        onChange={onChange}
+        onFocus={(_) => {
+          console.log("Focused!");
+        }}
+        onKeyDown={(event) => {
+          event.preventDefault();
+          console.log("event inside onKeyPress: ", event);
+          console.log("event key: ", event.key);
+          if (event.key == KeyCode.Enter) {
+            alert("Enter... (KeyPress, use charCode)");
+          }
+        }}
+      />
+    </div>
+  );
 };
 
 interface BulletsProps {

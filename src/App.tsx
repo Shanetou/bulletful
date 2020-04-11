@@ -1,5 +1,6 @@
 import React from "react";
-import "./App.css";
+
+import Container from "@material-ui/core/Container";
 
 import { Bullets, bulletFactory } from "./Bullets";
 import {
@@ -9,6 +10,7 @@ import {
   useGetCollection,
   deleteHalfOfAllBullets,
 } from "./firebase/service";
+import { ThemeProvider } from "@material-ui/core";
 
 const bulletsFromFactory = bulletFactory(10);
 console.log("bulletsFromFactory:", bulletsFromFactory);
@@ -20,15 +22,19 @@ function App() {
   console.log("bullets:", bullets);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <button onClick={() => getCollection()}>Get Collection</button>
-        <button onClick={() => deleteHalfOfAllBullets(bullets)}>
-          Delete half of bullets
-        </button>
+    <Container maxWidth="md">
+      <div style={{ height: "100vh" }}>
+        <header>
+          <div style={{ marginBottom: "32px" }}>
+            <button onClick={() => getCollection()}>Get Collection</button>
+            <button onClick={() => deleteHalfOfAllBullets(bullets)}>
+              Delete half of bullets
+            </button>
+          </div>
+        </header>
         <Bullets bullets={bullets} />
-      </header>
-    </div>
+      </div>
+    </Container>
   );
 }
 
