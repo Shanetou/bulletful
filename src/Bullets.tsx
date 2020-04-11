@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import TextField from "@material-ui/core/TextField";
 
 interface Bullet {
-  id: number;
+  id: string;
   parentId: number | null;
-  children: number[];
+  children: string[];
   indentation: number;
   text: string;
   // createdAt: string;
@@ -34,7 +35,7 @@ interface BulletProps {
 
 const Bullet = (props: BulletProps) => {
   const { bullet } = props;
-  return <li key={bullet.id}>{bullet.text}</li>;
+  return <TextField key={bullet.id} type="text" value={bullet.text} />;
 };
 
 interface BulletsProps {
@@ -42,15 +43,14 @@ interface BulletsProps {
 }
 
 export const Bullets = (props: BulletsProps) => {
-  // const { bullets } = props;
-  const [bullets] = useState(props.bullets);
+  let { bullets } = props;
 
   return (
-    <ul>
+    <div>
       {bullets.map((bullet) => {
         return <Bullet key={bullet.id} bullet={bullet} />;
       })}
-    </ul>
+    </div>
   );
 };
 

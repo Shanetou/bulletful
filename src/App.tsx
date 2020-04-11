@@ -13,10 +13,6 @@ import {
 const bulletsFromFactory = bulletFactory(10);
 console.log("bulletsFromFactory:", bulletsFromFactory);
 
-// bulletsFromFactory.forEach((bullet) => {
-//   addDocToCollection(Collection.bullets, bullet);
-// });
-
 function App() {
   // const bullets = useRealtimeCollection(Collection.bullets);
   // const bullets = useRealtimeCollection(Collection.bullets);
@@ -30,7 +26,7 @@ function App() {
         <button onClick={() => deleteHalfOfAllBullets(bullets)}>
           Delete half of bullets
         </button>
-        {/* <Bullets bullets={bulletFactory(12)} /> */}
+        <Bullets bullets={bullets} />
       </header>
     </div>
   );
