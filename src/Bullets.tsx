@@ -4,7 +4,7 @@ import { KeyCode } from "./utils/constants";
 interface Bullet {
   id: string;
   parentId: number | null;
-  children: string[];
+  children: Bullet[];
   indentation: number;
   text: string;
   // createdAt: string;
@@ -31,10 +31,12 @@ export const bulletFactory = (quantity: number) => {
 
 interface BulletProps {
   bullet: Bullet;
+  indentation: number;
+  key: string;
 }
 
 const Bullet = (props: BulletProps) => {
-  const { bullet } = props;
+  const { bullet, indentation } = props;
   const [text, setText] = useState(bullet.text);
 
   const onChange = (event: any) => {
@@ -43,7 +45,7 @@ const Bullet = (props: BulletProps) => {
   };
 
   return (
-    <div>
+    <div style={{ marginLeft: `${indentation * 24}px` }}>
       <TextField
         key={bullet.id}
         value={text}
@@ -66,15 +68,39 @@ const Bullet = (props: BulletProps) => {
 
 interface BulletsProps {
   bullets: Bullet[];
+  indentation: number;
 }
 
 export const Bullets = (props: BulletsProps) => {
-  let { bullets } = props;
+  let { bullets, indentation } = props;
 
   return (
     <div>
       {bullets.map((bullet) => {
-        return <Bullet key={bullet.id} bullet={bullet} />;
+        if (bullet.children.length === 0) {
+          return (
+            <Bullet
+              key={bullet.id}
+              indentation={indentation}
+              // key={bullet.id}
+              bullet={bullet}
+            />
+          );
+        } else {
+          return (
+            <React.Fragment key={bullet.id}>
+              <Bullet
+                indentation={indentation}
+                key={bullet.id}
+                bullet={bullet}
+              />
+              <Bullets
+                indentation={indentation + 1}
+                bullets={bullet.children}
+              />
+            </React.Fragment>
+          );
+        }
       })}
     </div>
   );
