@@ -1,5 +1,6 @@
 import React from "react";
 import { db } from "./firebase.js";
+import { Bullet, BulletType } from "../Bullet";
 
 export enum Collection {
   bullets = "bullets",
@@ -7,9 +8,9 @@ export enum Collection {
   children = "children",
 }
 
-interface Entity {
+type Entity = {
   id: string;
-}
+};
 
 const dataFromSnapshot = <T extends Entity>(
   snapshot: firebase.firestore.DocumentSnapshot
@@ -51,18 +52,25 @@ export function useRealtimeCollection(collection: Collection) {
   return bullets;
 }
 
+// The value should "extend" Entity
+type EntitiesByIds = Map<string, any>;
 // Add loading finite state machine
-export function useGetCollection(collection: Collection): [any[], () => void] {
-  const [bullets, setBullets] = React.useState([]);
+export function useGetCollection(
+  collection: Collection
+): [EntitiesByIds, () => void] {
+  const [bulletsById, setBullets] = React.useState(new Map());
 
   const getCollection = () => {
     db.collection(collection).onSnapshot((snapshot) => {
       // @ts-ignore
-      const bullets = [];
+      const bulletsMap = new Map();
 
       snapshot.forEach(
         (doc) => {
-          bullets.push(dataFromSnapshot(doc));
+          console.log("doc:", doc);
+
+          bulletsMap.set(doc.id, dataFromSnapshot(doc));
+          console.log("bulletsById:", bulletsMap);
         },
         // @ts-ignore
         (error) => {
@@ -71,11 +79,11 @@ export function useGetCollection(collection: Collection): [any[], () => void] {
       );
 
       // @ts-ignore
-      setBullets(bullets);
+      setBullets(bulletsMap);
     });
   };
 
-  return [bullets, getCollection];
+  return [bulletsById, getCollection];
 }
 
 export function useGetCollectionGroup(

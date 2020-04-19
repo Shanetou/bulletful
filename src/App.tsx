@@ -13,55 +13,15 @@ import {
   deleteHalfOfAllBullets,
 } from "./firebase/service";
 import { NestedBullets } from "./NestedBullets";
+import { bulletTree } from "./utils/helpers";
 
 function App() {
   // const bullets = useRealtimeCollection(Collection.bullets);
   const [bullets, getCollection] = useGetCollection(Collection.bullets);
   console.log("bullets:", bullets);
 
-  const bulletsForChildren = (
-    originalBullets: any[],
-    childrenBulletIds: string[]
-  ): any[] => {
-    return childrenBulletIds.map((bulletId: string) => {
-      const bulletForId = originalBullets.find(
-        (bullet) => bullet.id === bulletId
-      );
+  const formattedBulletTree = bulletTree(bullets);
 
-      if (bulletForId) {
-        if (bulletForId.children.length === 0) {
-          return bulletForId;
-        } else {
-          return {
-            ...bulletForId,
-            children: bulletsForChildren(originalBullets, bulletForId.children),
-          };
-        }
-      } else {
-        throw new Error("No bullet for ID!");
-      }
-    });
-  };
-
-  const bulletTree = (rootBullets: any[], allBullets: any[]) => {
-    return rootBullets.map((bullet) => {
-      console.log("bullet in first map", bullet);
-      if (bullet.children.length === 0) {
-        return bullet;
-      } else {
-        return {
-          ...bullet,
-          children: bulletsForChildren(bullets, bullet.children),
-        };
-      }
-    });
-  };
-
-  const rootBullets = bullets.filter((bullet) => {
-    return !bullet.parentId;
-  });
-
-  const formattedBulletTree = bulletTree(rootBullets, bullets);
   console.log(
     "formattedBulletTree:",
     JSON.stringify(formattedBulletTree, null, 2)
@@ -73,9 +33,9 @@ function App() {
         <header>
           <div style={{ marginBottom: "32px" }}>
             <button onClick={() => getCollection()}>Get Collection</button>
-            <button onClick={() => deleteHalfOfAllBullets(bullets)}>
+            {/* <button onClick={() => deleteHalfOfAllBullets(bullets)}>
               Delete half of bullets
-            </button>
+            </button> */}
           </div>
           {/* <div style={{ marginBottom: "32px" }}>
             <button onClick={() => getCollection()}>Get Nested Collection</button>

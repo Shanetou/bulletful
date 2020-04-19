@@ -15,8 +15,8 @@ export type BulletType = {
 };
 
 // Can this "inherit" from BulletType?
-type ServerBullet = {
-  // id: string;
+export type ServerBullet = {
+  id: string;
   parentId: number | null;
   children: string[];
   indentation: number;
@@ -33,7 +33,9 @@ type BulletProps = {
 };
 
 const addBulletBelow = (bulletAbove: BulletType) => {
-  const newBullet: ServerBullet = {
+  // const isBulletAboveAParent = bulletAbove
+
+  const newBullet = {
     parentId: bulletAbove.parentId,
     indentation: bulletAbove.indentation,
     text: "",
