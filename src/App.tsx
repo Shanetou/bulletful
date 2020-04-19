@@ -1,8 +1,10 @@
 import React from "react";
 
 import Container from "@material-ui/core/Container";
-
-import { Bullets, bulletFactory } from "./Bullets";
+import {
+  Bullets,
+  // bulletFactory
+} from "./Bullets";
 import {
   useRealtimeCollection,
   addDocToCollection,
@@ -10,50 +12,12 @@ import {
   useGetCollection,
   deleteHalfOfAllBullets,
 } from "./firebase/service";
-import { ThemeProvider } from "@material-ui/core";
-
-const bulletsFromFactory = bulletFactory(10);
-// console.log("bulletsFromFactory:", bulletsFromFactory);
+import { NestedBullets } from "./NestedBullets";
 
 function App() {
   // const bullets = useRealtimeCollection(Collection.bullets);
-  // const bullets = useRealtimeCollection(Collection.bullets);
   const [bullets, getCollection] = useGetCollection(Collection.bullets);
   console.log("bullets:", bullets);
-
-  // const bulletsForChildren = (bullets, childrenBulletIds) => {
-  //   childrenBulletIds.map((bulletId) => {
-  //     const bulletForId = bullets.find((bullet) => bullet.id === bulletId);
-  //     console.log("bulletForId:", bulletForId);
-
-  //     if (bulletForId) {
-  //       return bulletForId;
-  //     } else {
-  //       throw new Error("No bullet for ID!");
-  //     }
-  //   });
-  // };
-
-  // const bulletsForChildren = (bullets, childrenBulletIds) => {
-
-  //       return childrenBulletIds.map((bulletId: string) => {
-  //         console.log("bulletId", bulletId);
-  //         const bulletForId = bullets.find((bullet) => bullet.id === bulletId);
-  //         console.log("bulletForId:", bulletForId);
-
-  //         if (bulletForId) {
-  //           return bulletForId;
-  //           // if (bullet.children.length === 0) {
-  //           //   return bulletForId;
-  //           // } else {
-  //           //   return bulletTree(bullet.children);
-  //           // }
-  //         } else {
-  //           console.log("got to error");
-  //           throw new Error("No bullet for ID!");
-  //         }
-  //       });
-  // }
 
   const bulletsForChildren = (
     originalBullets: any[],
@@ -98,7 +62,10 @@ function App() {
   });
 
   const formattedBulletTree = bulletTree(rootBullets, bullets);
-  console.log("formattedBulletTree:", JSON.stringify(formattedBulletTree));
+  console.log(
+    "formattedBulletTree:",
+    JSON.stringify(formattedBulletTree, null, 2)
+  );
 
   return (
     <Container maxWidth="md">
@@ -110,8 +77,14 @@ function App() {
               Delete half of bullets
             </button>
           </div>
+          {/* <div style={{ marginBottom: "32px" }}>
+            <button onClick={() => getCollection()}>Get Nested Collection</button>
+          </div> */}
         </header>
         <Bullets bullets={formattedBulletTree} indentation={0} />
+        {/* <div style={{ marginBottom: "32px" }}>
+          <NestedBullets />
+        </div> */}
       </div>
     </Container>
   );

@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2019",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -14,14 +18,11 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    // Webhint suggested configs
     "importHelpers": true,
-    // https://43081j.com/2019/02/typescript-avoid-using-any
     "noImplicitReturns": true,
-    // https://oraclefrontovik.com/2019/12/19/some-typescript-compiler-options-for-improving-code-quality/
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

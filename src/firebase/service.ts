@@ -3,6 +3,8 @@ import { db } from "./firebase.js";
 
 export enum Collection {
   bullets = "bullets",
+  nestedBullets = "nestedBullets",
+  children = "children",
 }
 
 interface Entity {
@@ -55,6 +57,34 @@ export function useGetCollection(collection: Collection): [any[], () => void] {
 
   const getCollection = () => {
     db.collection(collection).onSnapshot((snapshot) => {
+      // @ts-ignore
+      const bullets = [];
+
+      snapshot.forEach(
+        (doc) => {
+          bullets.push(dataFromSnapshot(doc));
+        },
+        // @ts-ignore
+        (error) => {
+          console.log("error:", error);
+        }
+      );
+
+      // @ts-ignore
+      setBullets(bullets);
+    });
+  };
+
+  return [bullets, getCollection];
+}
+
+export function useGetCollectionGroup(
+  collection: Collection
+): [any[], () => void] {
+  const [bullets, setBullets] = React.useState([]);
+
+  const getCollection = () => {
+    db.collectionGroup(collection).onSnapshot((snapshot) => {
       // @ts-ignore
       const bullets = [];
 
