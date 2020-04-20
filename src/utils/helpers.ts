@@ -1,6 +1,13 @@
 import React from "react";
 import { Bullet, BulletType, ServerBullet } from "../Bullet";
 
+export const serverBulletToBulletNode = (bullet: any) => {
+  return {
+    ...bullet,
+    childrenIds: bullet.children,
+  };
+};
+
 const bulletsForChildren = (
   bulletsById: Map<string, ServerBullet>,
   childrenBulletIds: string[]
@@ -34,12 +41,12 @@ export const bulletTree = (bulletsById: Map<string, ServerBullet>) => {
   return rootBullets.map((bullet) => {
     console.log("bullet in first map", bullet);
     if (bullet.children.length === 0) {
-      return bullet;
+      return serverBulletToBulletNode(bullet);
     } else {
-      return {
+      return serverBulletToBulletNode({
         ...bullet,
         children: bulletsForChildren(bulletsById, bullet.children),
-      };
+      });
     }
   });
 };

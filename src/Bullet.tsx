@@ -3,9 +3,11 @@ import TextField from "@material-ui/core/TextField";
 import { KeyCode } from "./utils/constants";
 import { addDocToCollection, Collection } from "./firebase/service";
 
+// really a BulletNode?
 export type BulletType = {
   id: string;
   parentId: number | null;
+  childrenIds: string[];
   children: BulletType[];
   indentation: number;
   text: string;
@@ -32,18 +34,45 @@ type BulletProps = {
   key: string;
 };
 
-const addBulletBelow = (bulletAbove: BulletType) => {
-  // const isBulletAboveAParent = bulletAbove
+const isParent = (bullet: BulletType): boolean => bullet.children.length > 0;
+const isChildOf = (possibleChild: BulletType, possibleParent: BulletType) => {
+  return possibleParent.childrenIds.some(
+    (childId: string) => childId === possibleChild.id
+  );
+};
 
-  const newBullet = {
-    parentId: bulletAbove.parentId,
-    indentation: bulletAbove.indentation,
-    text: "",
-    // add children if this is a parent that has children
-    children: [],
-  };
+const addBulletBelow = (bullet: BulletType) => {
+  const shouldAddBulletAsChild = isParent(bullet);
+  console.log("shouldAddBulletAsChild:", shouldAddBulletAsChild);
 
-  addDocToCollection(Collection.bullets, newBullet);
+  if (shouldAddBulletAsChild) {
+    const newBullet = {
+      parentId: bullet.id,
+      children: [],
+      indentation: bullet.indentation + 1,
+      text: "",
+      // add children if this is a parent that has children
+    };
+
+    // add child
+    addDocToCollection(Collection.bullets, newBullet).then((result) => {
+      console.log("result:", result);
+    });
+
+    // update parent
+  } else {
+    const newBullet = {
+      parentId: bullet.parentId,
+      children: [],
+      indentation: bullet.indentation + 1,
+      text: "",
+    };
+
+    // add child
+    addDocToCollection(Collection.bullets, newBullet).then((result) => {
+      console.log("result:", result);
+    });
+  }
 };
 
 export const Bullet = (props: BulletProps) => {
@@ -65,10 +94,10 @@ export const Bullet = (props: BulletProps) => {
           console.log("Focused bullet: ", bullet.id);
         }}
         onKeyDown={(event) => {
-          event.preventDefault();
           console.log("event inside onKeyPress: ", event);
           console.log("event key: ", event.key);
           if (event.key === KeyCode.Enter) {
+            event.preventDefault();
             addBulletBelow(bullet);
             // alert("Enter... (KeyPress, use charCode)");
           }

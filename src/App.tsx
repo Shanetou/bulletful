@@ -7,20 +7,26 @@ import {
 } from "./Bullets";
 import {
   useRealtimeCollection,
-  addDocToCollection,
   Collection,
   useGetCollection,
   deleteHalfOfAllBullets,
 } from "./firebase/service";
 import { NestedBullets } from "./NestedBullets";
-import { bulletTree } from "./utils/helpers";
+import { bulletTree, serverBulletToBulletNode } from "./utils/helpers";
 
 function App() {
   // const bullets = useRealtimeCollection(Collection.bullets);
   const [bullets, getCollection] = useGetCollection(Collection.bullets);
+  const bulletsWithChildrenIds = bullets.map((bullet) => {
+    return serverBulletToBulletNode(bullet);
+  });
+  const bulletsMap = new Map(
+    bulletsWithChildrenIds.map((obj) => [obj.id, obj])
+  );
   console.log("bullets:", bullets);
+  console.log("bulletNodes:", bulletsMap);
 
-  const formattedBulletTree = bulletTree(bullets);
+  const formattedBulletTree = bulletTree(bulletsMap);
 
   console.log(
     "formattedBulletTree:",

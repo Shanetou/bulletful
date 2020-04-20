@@ -17,6 +17,7 @@ const dataFromSnapshot = <T extends Entity>(
 ): T | undefined => {
   if (!snapshot.exists) return undefined;
   const data = snapshot.data() as any;
+
   return {
     ...data,
     id: snapshot.id,
@@ -52,25 +53,20 @@ export function useRealtimeCollection(collection: Collection) {
   return bullets;
 }
 
-// The value should "extend" Entity
-type EntitiesByIds = Map<string, any>;
 // Add loading finite state machine
-export function useGetCollection(
-  collection: Collection
-): [EntitiesByIds, () => void] {
-  const [bulletsById, setBullets] = React.useState(new Map());
+export function useGetCollection(collection: Collection): [any[], () => void] {
+  const [bullets, setBullets] = React.useState([]);
 
   const getCollection = () => {
     db.collection(collection).onSnapshot((snapshot) => {
       // @ts-ignore
-      const bulletsMap = new Map();
+      const bullets = [];
 
       snapshot.forEach(
         (doc) => {
           console.log("doc:", doc);
 
-          bulletsMap.set(doc.id, dataFromSnapshot(doc));
-          console.log("bulletsById:", bulletsMap);
+          bullets.push(dataFromSnapshot(doc));
         },
         // @ts-ignore
         (error) => {
@@ -79,11 +75,11 @@ export function useGetCollection(
       );
 
       // @ts-ignore
-      setBullets(bulletsMap);
+      setBullets(bullets);
     });
   };
 
-  return [bulletsById, getCollection];
+  return [bullets, getCollection];
 }
 
 export function useGetCollectionGroup(
@@ -116,10 +112,12 @@ export function useGetCollectionGroup(
 
 // @ts-ignore
 export function addDocToCollection(collection: Collection, doc) {
-  db.collection(collection)
+  return db
+    .collection(collection)
     .add(doc)
     .then((docRef) => {
       console.log(`Document ${docRef.id} written to ${collection}`, docRef.id);
+      return docRef;
     })
     .catch((error) => {
       console.error("Error adding document: ", error);
