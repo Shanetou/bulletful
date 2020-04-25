@@ -17,7 +17,7 @@ const bulletsForChildren = (
 
     if (bulletForId) {
       if (bulletForId.children.length === 0) {
-        return bulletForId;
+        return serverBulletToBulletNode(bulletForId);
       } else {
         return {
           ...bulletForId,
@@ -39,14 +39,13 @@ export const bulletTree = (bulletsById: Map<string, ServerBullet>) => {
   });
 
   return rootBullets.map((bullet) => {
-    console.log("bullet in first map", bullet);
     if (bullet.children.length === 0) {
       return serverBulletToBulletNode(bullet);
     } else {
-      return serverBulletToBulletNode({
+      return {
         ...bullet,
         children: bulletsForChildren(bulletsById, bullet.children),
-      });
+      };
     }
   });
 };

@@ -23,14 +23,12 @@ function App() {
   const bulletsMap = new Map(
     bulletsWithChildrenIds.map((obj) => [obj.id, obj])
   );
-  console.log("bullets:", bullets);
-  console.log("bulletNodes:", bulletsMap);
 
   const formattedBulletTree = bulletTree(bulletsMap);
 
   console.log(
     "formattedBulletTree:",
-    JSON.stringify(formattedBulletTree, null, 2)
+    JSON.stringify(formattedBulletTree, null, 4)
   );
 
   return (

@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import TextField from "@material-ui/core/TextField";
 import { KeyCode } from "./utils/constants";
-import { addDocToCollection, Collection } from "./firebase/service";
+import {
+  addDocToCollection,
+  Collection,
+  updateDocInCollection,
+} from "./firebase/service";
 
 // really a BulletNode?
 export type BulletType = {
@@ -45,6 +49,9 @@ const addBulletBelow = (bullet: BulletType) => {
   const shouldAddBulletAsChild = isParent(bullet);
   console.log("shouldAddBulletAsChild:", shouldAddBulletAsChild);
 
+  // if we press enter on parent, add the new bullet as a child
+  // if we press enter on sibling, add the new bullet as a sibling
+
   if (shouldAddBulletAsChild) {
     const newBullet = {
       parentId: bullet.id,
@@ -55,8 +62,22 @@ const addBulletBelow = (bullet: BulletType) => {
     };
 
     // add child
-    addDocToCollection(Collection.bullets, newBullet).then((result) => {
-      console.log("result:", result);
+    addDocToCollection(Collection.bullets, newBullet).then((docRef) => {
+      console.log("result docRef from addDocToCollection:", docRef);
+      if (docRef && docRef.id) {
+        console.log("bullet:", bullet);
+        let parentChildrenIds = bullet.childrenIds;
+        console.log("parentChildrenIds:", parentChildrenIds);
+        let newParentChildrenIds = [docRef.id, ...parentChildrenIds];
+        console.log("newParentChildrenIds:", newParentChildrenIds);
+
+        updateDocInCollection(Collection.bullets, bullet.id, {
+          // children: [docRef.id, ...bullet.childrenIds],
+          children: newParentChildrenIds,
+        });
+      } else {
+        throw new Error();
+      }
     });
 
     // update parent

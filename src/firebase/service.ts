@@ -1,6 +1,6 @@
 import React from "react";
 import { db } from "./firebase.js";
-import { Bullet, BulletType } from "../Bullet";
+import { Bullet, BulletType, ServerBullet } from "../Bullet";
 
 export enum Collection {
   bullets = "bullets",
@@ -121,6 +121,28 @@ export function addDocToCollection(collection: Collection, doc) {
     })
     .catch((error) => {
       console.error("Error adding document: ", error);
+    });
+}
+
+type updateData = {};
+// @ts-ignore
+export function updateDocInCollection(
+  collection: Collection,
+  docId: string,
+  updateData: Partial<ServerBullet>
+) {
+  return db
+    .collection(collection)
+    .doc(docId)
+    .update(updateData)
+    .then((iDontKnowWhatThisIs) => {
+      console.log(
+        "inside updateDocInCollection iDontKnowWhatThisIs:",
+        iDontKnowWhatThisIs
+      );
+    })
+    .catch((error) => {
+      console.error("Error in updateDocInCollection: ", error);
     });
 }
 
