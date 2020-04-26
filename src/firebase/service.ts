@@ -1,6 +1,6 @@
 import React from "react";
 import { db } from "./firebase.js";
-import { Bullet, BulletType, ServerBullet } from "../Bullet";
+import { ServerBullet } from "../Bullet";
 
 export enum Collection {
   bullets = "bullets",

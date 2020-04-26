@@ -1,10 +1,7 @@
 import React from "react";
 
 import Container from "@material-ui/core/Container";
-import {
-  Bullets,
-  // bulletFactory
-} from "./Bullets";
+import { Bullets } from "./Bullets";
 import {
   useRealtimeCollection,
   Collection,
@@ -36,19 +33,10 @@ function App() {
       <div style={{ height: "100vh" }}>
         <header>
           <div style={{ marginBottom: "32px" }}>
-            <button onClick={() => getCollection()}>Get Collection</button>
-            {/* <button onClick={() => deleteHalfOfAllBullets(bullets)}>
-              Delete half of bullets
-            </button> */}
+            <button onClick={() => getCollection()}>Get Collection</button>}
           </div>
-          {/* <div style={{ marginBottom: "32px" }}>
-            <button onClick={() => getCollection()}>Get Nested Collection</button>
-          </div> */}
         </header>
-        <Bullets bullets={formattedBulletTree} indentation={0} />
-        {/* <div style={{ marginBottom: "32px" }}>
-          <NestedBullets />
-        </div> */}
+        <Bullets bullets={formattedBulletTree} indentation={0} />}
       </div>
     </Container>
   );

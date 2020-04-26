@@ -1,17 +1,6 @@
 import React from "react";
 import { Bullet, BulletType } from "./Bullet";
 
-// interface ServerBullet {
-//   // id: string;
-//   parentId: number | null;
-//   children: string[];
-//   indentation: number;
-//   text: string;
-//   // createdAt: string;
-//   // updatedAt: string;
-//   // collapsed: bool;
-// }
-
 interface BulletsProps {
   bullets: BulletType[];
   indentation: number;
@@ -25,12 +14,7 @@ export const Bullets = (props: BulletsProps) => {
       {bullets.map((bullet) => {
         if (bullet.children.length === 0) {
           return (
-            <Bullet
-              key={bullet.id}
-              indentation={indentation}
-              // key={bullet.id}
-              bullet={bullet}
-            />
+            <Bullet key={bullet.id} indentation={indentation} bullet={bullet} />
           );
         } else {
           return (

@@ -15,9 +15,6 @@ export type BulletType = {
   children: BulletType[];
   indentation: number;
   text: string;
-  // createdAt: string;
-  // updatedAt: string;
-  // collapsed: bool;
 };
 
 // Can this "inherit" from BulletType?
@@ -27,9 +24,6 @@ export type ServerBullet = {
   children: string[];
   indentation: number;
   text: string;
-  // createdAt: string;
-  // updatedAt: string;
-  // collapsed: bool;
 };
 
 type BulletProps = {
@@ -39,18 +33,14 @@ type BulletProps = {
 };
 
 const isParent = (bullet: BulletType): boolean => bullet.children.length > 0;
-const isChildOf = (possibleChild: BulletType, possibleParent: BulletType) => {
-  return possibleParent.childrenIds.some(
-    (childId: string) => childId === possibleChild.id
-  );
-};
+const isRootNode = (bullet: BulletType): boolean => bullet.parentId === null;
 
 const addBulletBelow = (bullet: BulletType) => {
   const shouldAddBulletAsChild = isParent(bullet);
-  console.log("shouldAddBulletAsChild:", shouldAddBulletAsChild);
 
   // if we press enter on parent, add the new bullet as a child
   // if we press enter on sibling, add the new bullet as a sibling
+  // what about root level enters?
 
   if (shouldAddBulletAsChild) {
     const newBullet = {
@@ -58,21 +48,15 @@ const addBulletBelow = (bullet: BulletType) => {
       children: [],
       indentation: bullet.indentation + 1,
       text: "",
-      // add children if this is a parent that has children
     };
 
     // add child
     addDocToCollection(Collection.bullets, newBullet).then((docRef) => {
-      console.log("result docRef from addDocToCollection:", docRef);
       if (docRef && docRef.id) {
-        console.log("bullet:", bullet);
         let parentChildrenIds = bullet.childrenIds;
-        console.log("parentChildrenIds:", parentChildrenIds);
         let newParentChildrenIds = [docRef.id, ...parentChildrenIds];
-        console.log("newParentChildrenIds:", newParentChildrenIds);
 
         updateDocInCollection(Collection.bullets, bullet.id, {
-          // children: [docRef.id, ...bullet.childrenIds],
           children: newParentChildrenIds,
         });
       } else {
