@@ -30,12 +30,67 @@ type BulletProps = {
   bullet: BulletType;
   indentation: number;
   key: string;
+  parent: null | BulletType;
 };
 
 const isParent = (bullet: BulletType): boolean => bullet.children.length > 0;
 const isRootNode = (bullet: BulletType): boolean => bullet.parentId === null;
 
-const addBulletBelow = (bullet: BulletType) => {
+const addBulletAsChild = (bullet: BulletType) => {
+  const newBullet = {
+    parentId: bullet.id,
+    children: [],
+    indentation: bullet.indentation + 1,
+    text: "",
+  };
+
+  addDocToCollection(Collection.bullets, newBullet).then((docRef) => {
+    if (docRef && docRef.id) {
+      let parentChildrenIds = bullet.childrenIds;
+      let newParentChildrenIds = [docRef.id, ...parentChildrenIds];
+
+      updateDocInCollection(Collection.bullets, bullet.id, {
+        children: newParentChildrenIds,
+      });
+    } else {
+      throw new Error();
+    }
+  });
+};
+
+const addBulletAsSibling = (bullet: BulletType, parent: BulletType) => {
+  const newBullet = {
+    parentId: parent.id,
+    children: [],
+    indentation: bullet.indentation,
+    text: "",
+  };
+
+  addDocToCollection(Collection.bullets, newBullet).then((docRef) => {
+    if (docRef && docRef.id) {
+      let parentChildrenIds = parent.childrenIds;
+      let indexOfEnterBullet = parentChildrenIds.indexOf(bullet.id);
+      let elmsToInsertAfter = parentChildrenIds.slice(
+        0,
+        indexOfEnterBullet + 1
+      );
+      let elmsToInsertBefore = parentChildrenIds.slice(indexOfEnterBullet + 1);
+      let newParentChildrenIds = [
+        ...elmsToInsertAfter,
+        docRef.id,
+        ...elmsToInsertBefore,
+      ];
+
+      updateDocInCollection(Collection.bullets, parent.id, {
+        children: newParentChildrenIds,
+      });
+    } else {
+      throw new Error();
+    }
+  });
+};
+
+const addBulletBelow = (bullet: BulletType, parent: BulletType) => {
   const shouldAddBulletAsChild = isParent(bullet);
 
   // if we press enter on parent, add the new bullet as a child
@@ -43,45 +98,15 @@ const addBulletBelow = (bullet: BulletType) => {
   // what about root level enters?
 
   if (shouldAddBulletAsChild) {
-    const newBullet = {
-      parentId: bullet.id,
-      children: [],
-      indentation: bullet.indentation + 1,
-      text: "",
-    };
-
-    // add child
-    addDocToCollection(Collection.bullets, newBullet).then((docRef) => {
-      if (docRef && docRef.id) {
-        let parentChildrenIds = bullet.childrenIds;
-        let newParentChildrenIds = [docRef.id, ...parentChildrenIds];
-
-        updateDocInCollection(Collection.bullets, bullet.id, {
-          children: newParentChildrenIds,
-        });
-      } else {
-        throw new Error();
-      }
-    });
-
-    // update parent
+    addBulletAsChild(bullet);
   } else {
-    const newBullet = {
-      parentId: bullet.parentId,
-      children: [],
-      indentation: bullet.indentation + 1,
-      text: "",
-    };
-
-    // add child
-    addDocToCollection(Collection.bullets, newBullet).then((result) => {
-      console.log("result:", result);
-    });
+    addBulletAsSibling(bullet, parent);
   }
 };
 
 export const Bullet = (props: BulletProps) => {
-  const { bullet, indentation } = props;
+  const { bullet, indentation, parent } = props;
+  console.log("bullet text:", bullet.text);
   const [text, setText] = useState(bullet.text);
 
   const onChange = (event: any) => {
@@ -97,13 +122,19 @@ export const Bullet = (props: BulletProps) => {
         onChange={onChange}
         onFocus={(_) => {
           console.log("Focused bullet: ", bullet.id);
+          if (parent && parent.text) {
+            console.log("In Bullet, bullet text: ", parent.text);
+          }
         }}
         onKeyDown={(event) => {
-          console.log("event inside onKeyPress: ", event);
           console.log("event key: ", event.key);
           if (event.key === KeyCode.Enter) {
             event.preventDefault();
-            addBulletBelow(bullet);
+
+            // deal with this check elsewhere?
+            if (parent) {
+              addBulletBelow(bullet, parent);
+            }
             // alert("Enter... (KeyPress, use charCode)");
           }
         }}

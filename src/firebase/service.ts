@@ -6,6 +6,7 @@ export enum Collection {
   bullets = "bullets",
   nestedBullets = "nestedBullets",
   children = "children",
+  emptyCollection = "emptyCollection",
 }
 
 type Entity = {
