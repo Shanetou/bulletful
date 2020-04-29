@@ -36,6 +36,9 @@ export function useRealtimeCollection(collection: Collection) {
 
       snapshot.forEach(
         (doc) => {
+          var source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+          console.log(source, " data: ", doc.data());
+
           bullets.push(dataFromSnapshot(doc));
         },
         // @ts-ignore
@@ -148,7 +151,8 @@ export function updateDocInCollection(
 }
 
 export function deleteDocFromCollection(collection: string, docId: string) {
-  db.collection(collection)
+  return db
+    .collection(collection)
     .doc(docId)
     .delete()
     .then(() => {

@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import TextField from "@material-ui/core/TextField";
-import { KeyCode } from "./utils/constants";
+import { DeleteBulletButton } from "./DeleteBulletButton";
 import {
   addDocToCollection,
   Collection,
   updateDocInCollection,
+  deleteDocFromCollection,
 } from "./firebase/service";
+import { KeyCode } from "./utils/constants";
 
 // really a BulletNode?
 export type BulletType = {
@@ -90,6 +92,10 @@ const addBulletAsSibling = (bullet: BulletType, parent: BulletType) => {
   });
 };
 
+const removeChildFromParent = (bullet: BulletType, parent: BulletType) => {
+  console.log("Removing child from parent");
+};
+
 const addBulletBelow = (bullet: BulletType, parent: BulletType) => {
   const shouldAddBulletAsChild = isParent(bullet);
 
@@ -114,8 +120,18 @@ export const Bullet = (props: BulletProps) => {
     setText(event.target.value);
   };
 
+  // Remove child after removing from parent array for await both
+  const onDelete = (bullet: BulletType, parent: BulletType | null) => () => {
+    deleteDocFromCollection(Collection.bullets, bullet.id).then(() => {
+      if (parent) {
+        removeChildFromParent(bullet, parent);
+      }
+    });
+  };
+
   return (
     <div style={{ marginLeft: `${indentation * 24}px` }}>
+      <DeleteBulletButton handleClick={onDelete(bullet, parent)} />
       <TextField
         key={bullet.id}
         value={text}

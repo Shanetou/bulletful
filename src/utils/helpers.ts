@@ -25,7 +25,7 @@ const bulletsForChildren = (
         };
       }
     } else {
-      throw new Error("No bullet for ID!");
+      throw new Error(`No bullet for ID: ${bulletId}`);
     }
   });
 };
